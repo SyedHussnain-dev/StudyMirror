@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# StudyMirror 🧠
 
-## Getting Started
+> **If you can explain it, you understand it.**
 
-First, run the development server:
+StudyMirror is an AI-powered learning tool built on the Feynman Technique. Instead of the AI teaching you, **you teach the AI**. By forcing active recall and explanation, StudyMirror exposes gaps in your knowledge and tests your true conceptual understanding.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚨 The Problem
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**The Illusion of Competence:** Students often read textbooks, highlight notes, or watch tutorials and feel like they understand a topic. However, this is usually just passive recognition. When pressed to explain the concept from scratch, they struggle. Students don't know what they don't know until they are tested in high-stakes environments like exams or interviews.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 💡 The Solution
 
-## Learn More
+StudyMirror flips the traditional AI tutoring paradigm. It acts as a "confused junior student" who asks you to explain a topic. 
 
-To learn more about Next.js, take a look at the following resources:
+It **never** gives you the answer. Instead, it asks relentless, probing questions, challenges vague statements, asks for real-world examples, and forces you to articulate the "why" and "how" behind a concept. After an intense back-and-forth session, it evaluates your understanding and gives you a structured grade.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠️ Tech Stack
 
-## Deploy on Vercel
+- **Framework:** Next.js 15 (App Router)
+- **Language:** TypeScript
+- **Styling & UI:** Tailwind CSS, shadcn/ui
+- **Animations:** Framer Motion
+- **AI Engine:** Google Gemini SDK (`gemini-2.5-flash`)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🤖 AI Components
+
+StudyMirror relies on a dual-agent architecture powered by Google Gemini, separated into two distinct state machines:
+
+### 1. The Interview Engine (Persona-Driven Chat)
+Powered by a strict, highly engineered system prompt, the AI adopts the persona of a confused junior student. 
+- **Core Rules:** It is explicitly instructed *never* to teach, *never* to provide definitions, and *never* to give generic praise. 
+- **Question Rotation:** It analyzes the user's responses and dynamically rotates through question types: definition checks, example requests, internal mechanism probes, and edge-case challenges.
+- **Modes:** Supports adjustable strictness (Beginner, Viva, Strict Professor) modifying the AI's tone and technical expectations.
+
+### 2. The Evaluation Engine (Structured JSON Analysis)
+Once a conversation reaches a sufficient depth (typically 6 turns), a secondary AI pass is triggered.
+- **Transcript Analysis:** It reviews the entire chat history as an expert evaluator.
+- **Structured Output:** It is forced to output a strictly typed JSON schema containing a 0-100 overall score.
+- **Categorical Breakdown:** It grades the user across 5 metrics (Concept Accuracy, Depth of Explanation, Examples Used, Clarity, Missing Concept Coverage) and highlights strengths, vague points, and actionable revision suggestions.
+
+---
+
+## 🚀 Getting Started
+
+1. **Clone and Install:**
+   ```bash
+   git clone git@github.com:SyedHussnain-dev/StudyMirror.git
+   cd StudyMirror
+   npm install
+   ```
+
+2. **Set up Environment Variables:**
+   Create a `.env.local` file in the root directory and add your Google Gemini API key:
+   ```env
+   GEMINI_API_KEY=your_gemini_api_key_here
+   MODEL_NAME=gemini-2.5-flash
+   ```
+
+3. **Run the Development Server:**
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) to see the app in action!
