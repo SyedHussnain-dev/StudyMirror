@@ -140,62 +140,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Demo Preview */}
-      <section className="py-24 px-4 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-600/5 to-transparent pointer-events-none" />
-        <div className="max-w-3xl mx-auto relative z-10">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              See It In Action
-            </h2>
-            <p className="text-slate-400">
-              A glimpse of how StudyMirror validates understanding
-            </p>
-          </div>
 
-          {/* Mock Chat */}
-          <div className="bg-slate-900/60 backdrop-blur-sm border border-slate-800/50 rounded-2xl p-6 space-y-4">
-            {/* Header */}
-            <div className="flex items-center gap-3 pb-4 border-b border-slate-800/50">
-              <div className="w-8 h-8 rounded-lg bg-violet-500/20 flex items-center justify-center text-violet-400">
-                <Brain className="size-4" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-white">StudyMirror Interview</p>
-                <p className="text-xs text-slate-500">Topic: Polymorphism · Strict Professor</p>
-              </div>
-            </div>
-
-            {/* Messages */}
-            <div className="space-y-4">
-              {/* User */}
-              <div className="flex justify-end">
-                <div className="bg-gradient-to-br from-violet-600 to-purple-600 text-white rounded-2xl rounded-tr-sm px-4 py-3 text-sm max-w-[80%]">
-                  Polymorphism means methods behave differently depending on the object.
-                </div>
-              </div>
-              {/* AI */}
-              <div className="flex justify-start">
-                <div className="bg-slate-800/80 border border-slate-700/50 text-slate-200 rounded-2xl rounded-tl-sm px-4 py-3 text-sm max-w-[80%]">
-                  What makes the same method call behave differently across objects? What mechanism enables that at runtime?
-                </div>
-              </div>
-              {/* User */}
-              <div className="flex justify-end">
-                <div className="bg-gradient-to-br from-violet-600 to-purple-600 text-white rounded-2xl rounded-tr-sm px-4 py-3 text-sm max-w-[80%]">
-                  Different classes implement the same function... through inheritance.
-                </div>
-              </div>
-              {/* AI */}
-              <div className="flex justify-start">
-                <div className="bg-slate-800/80 border border-slate-700/50 text-slate-200 rounded-2xl rounded-tl-sm px-4 py-3 text-sm max-w-[80%]">
-                  You mentioned inheritance, but not overriding specifically. What&apos;s the difference between overriding and overloading?
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Bottom CTA */}
       <section className="py-24 px-4">

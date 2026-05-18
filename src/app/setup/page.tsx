@@ -10,7 +10,6 @@ import {
   ArrowRight,
   ArrowLeft,
   Sparkles,
-  Zap,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -41,10 +40,6 @@ export default function SetupPage() {
     router.push(`/interview?${params.toString()}`);
   };
 
-  const handleDemo = () => {
-    setTopic("Polymorphism");
-    setMode("strict");
-  };
 
   return (
     <main className="flex-1 min-h-screen relative">
@@ -172,13 +167,6 @@ export default function SetupPage() {
             <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
           </button>
 
-          <button
-            onClick={handleDemo}
-            className="flex items-center gap-2 px-6 py-4 border border-slate-700/50 text-slate-400 hover:text-slate-200 hover:border-slate-600 rounded-xl transition-all duration-300 text-sm font-medium w-full sm:w-auto justify-center cursor-pointer"
-          >
-            <Zap className="size-4" />
-            Try Demo Topic
-          </button>
         </motion.div>
       </div>
     </main>
