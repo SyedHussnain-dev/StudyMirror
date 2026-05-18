@@ -13,16 +13,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-const SUGGESTION_CHIPS = [
-  "OOP",
-  "Recursion",
-  "Networking",
-  "Database Normalization",
-  "Calculus",
-  "Photosynthesis",
-  "Newton's Laws",
-  "Binary Search",
-];
+
 
 export default function SetupPage() {
   const router = useRouter();
@@ -96,22 +87,6 @@ export default function SetupPage() {
             className="w-full px-5 py-4 bg-slate-900/60 border border-slate-700/50 rounded-xl text-white placeholder:text-slate-600 focus:outline-none focus:border-violet-500/50 focus:ring-2 focus:ring-violet-500/20 transition-all text-lg"
           />
 
-          {/* Suggestion chips */}
-          <div className="flex flex-wrap gap-2 mt-4">
-            {SUGGESTION_CHIPS.map((chip) => (
-              <button
-                key={chip}
-                onClick={() => setTopic(chip)}
-                className={`px-3 py-1.5 text-sm rounded-lg border transition-all duration-200 cursor-pointer ${
-                  topic === chip
-                    ? "bg-violet-500/20 border-violet-500/40 text-violet-300"
-                    : "bg-slate-800/60 border-slate-700/50 text-slate-400 hover:border-slate-600 hover:text-slate-300"
-                }`}
-              >
-                {chip}
-              </button>
-            ))}
-          </div>
         </motion.div>
 
         {/* Mode Selection */}
