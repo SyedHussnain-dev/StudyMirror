@@ -107,6 +107,10 @@ export function useChat({ topic, mode }: Props) {
         setError(replyText);
       } else {
         replyText = buildFallbackReply(content);
+        // Show the actual error message from the server if available, so they know why it failed on live site
+        if (data.error || data.details) {
+          setError(`API Error: ${data.details || data.error}. Using offline fallback.`);
+        }
       }
 
       const aiMessage: Message = {
