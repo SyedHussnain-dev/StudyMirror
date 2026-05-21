@@ -78,7 +78,7 @@ export async function generateContent(
 export async function generateWithRetry(
   modelName: string,
   messages: AIMessage[],
-  maxRetries = 2
+  maxRetries = 3
 ): Promise<string> {
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
@@ -86,8 +86,8 @@ export async function generateWithRetry(
     } catch (err: any) {
       const status = err?.status;
       if (status === 429 && attempt < maxRetries) {
-        const delay = Math.pow(2, attempt) * 2000;
-        console.log(`Rate limited on ${modelName}, retrying in ${delay}ms...`);
+        const delay = Math.pow(2, attempt) * 3000; // 3s, 6s, 12s
+        console.log(`Rate limited on ${modelName}, retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})...`);
         await new Promise((r) => setTimeout(r, delay));
         continue;
       }

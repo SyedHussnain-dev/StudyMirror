@@ -34,6 +34,7 @@ export function useChat({ topic, mode }: Props) {
       try {
         const res = await fetch("/api/chat", {
           method: "POST",
+          cache: "no-store",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             topic,
@@ -88,6 +89,7 @@ export function useChat({ topic, mode }: Props) {
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
+        cache: "no-store",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           topic,
@@ -103,7 +105,7 @@ export function useChat({ topic, mode }: Props) {
       if (res.ok && typeof data.reply === "string" && data.reply.trim().length > 0) {
         replyText = data.reply;
       } else if (data.errorType === "quota") {
-        replyText = "⚠️ API quota exceeded. Please update your Gemini API key in `.env.local` or enable billing on your Google AI project.";
+        replyText = "⚠️ API rate limit reached. Please wait a moment and try again.";
         setError(replyText);
       } else {
         replyText = buildFallbackReply(content);
@@ -168,6 +170,7 @@ export function useChat({ topic, mode }: Props) {
     try {
       const res = await fetch("/api/evaluate", {
         method: "POST",
+        cache: "no-store",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           topic,
