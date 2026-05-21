@@ -1,11 +1,6 @@
 // OpenRouter AI client — drop-in replacement for the old Gemini SDK setup
 
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1/chat/completions";
-
-if (!OPENROUTER_API_KEY) {
-  throw new Error("Missing OPENROUTER_API_KEY in environment variables");
-}
 
 // Primary + fallback models (tried in order)
 export const modelNames = [
@@ -36,10 +31,15 @@ export async function generateContent(
   modelName: string,
   messages: AIMessage[]
 ): Promise<string> {
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey) {
+    throw new Error("Missing OPENROUTER_API_KEY in environment variables");
+  }
+
   const res = await fetch(OPENROUTER_BASE_URL, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+      Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
       "HTTP-Referer": process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
       "X-Title": "StudyMirror",
