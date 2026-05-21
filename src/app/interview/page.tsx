@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+const EVALUATION_TURN_TARGET = 2;
+
 function InterviewContent() {
   const searchParams = useSearchParams();
   const topic = searchParams.get("topic") || "";
@@ -27,6 +29,7 @@ function InterviewContent() {
     loading: isLoading,
     evaluationReady,
     evaluation,
+    error,
     sendMessage,
     getEvaluation: requestEvaluation,
   } = useChat({ topic, mode });
@@ -85,7 +88,7 @@ function InterviewContent() {
             {/* Turn counter */}
             <div className="flex items-center gap-1.5 text-xs text-slate-500">
               <MessageSquare className="size-3.5" />
-              Turn {turnCount}/6
+              Turn {turnCount}/{EVALUATION_TURN_TARGET}
             </div>
 
             {/* Evaluate button */}
@@ -113,6 +116,16 @@ function InterviewContent() {
       </motion.header>
 
 
+
+      {/* Error banner */}
+      {error && (
+        <div className="shrink-0 mx-auto max-w-4xl w-full px-4 pt-2">
+          <div className="flex items-center gap-2 px-4 py-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-400 text-sm">
+            <AlertCircle className="size-4 shrink-0" />
+            <span>{error}</span>
+          </div>
+        </div>
+      )}
 
       {/* Main content */}
       <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full min-h-0">

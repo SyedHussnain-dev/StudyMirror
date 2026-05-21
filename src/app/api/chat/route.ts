@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { model } from "@/lib/gemini";
+import { generateWithFallback, type AIMessage } from "@/lib/ai";
 import { buildSystemPrompt } from "@/lib/prompts";
 import type { ChatRequest } from "@/lib/types";
 
@@ -10,55 +10,62 @@ export async function POST(req: Request) {
     const body: ChatRequest = await req.json();
     const { topic, mode, messages } = body;
 
-    if (!topic || !messages) {
+    if (!topic) {
       return NextResponse.json(
-        { error: "Missing topic or messages" },
+        { error: "Missing topic", errorType: "validation" },
         { status: 400 }
       );
     }
 
     const systemPrompt = buildSystemPrompt(topic, mode);
 
-    // Convert chat history into a single prompt (simpler + stable)
-    const conversation = messages
-      .map((m) => `${m.role.toUpperCase()}: ${m.content}`)
-      .join("\n");
+    // Build OpenRouter-compatible message array
+    const aiMessages: AIMessage[] = [
+      { role: "system", content: systemPrompt },
+    ];
 
-    // Fix for the initial empty message array on chat start
-    if (messages.length === 0) {
-      const fullPrompt = `
-${systemPrompt}
-
-The user just joined the interview. 
-Generate your very first short question to ask them to explain the concept.
-Respond ONLY as StudyMirror interviewer:
-`;
-      const result = await model.generateContent(fullPrompt);
-      const response = await result.response;
-      return NextResponse.json({
-        reply: response.text(),
-        evaluationReady: false,
+    if (!messages || messages.length === 0) {
+      // First turn — ask the AI to generate an opening question
+      aiMessages.push({
+        role: "user",
+        content:
+          "I just joined the interview. Generate your very first short question to ask me to explain the concept. Respond ONLY as StudyMirror interviewer.",
       });
+    } else {
+      // Append conversation history
+      for (const m of messages) {
+        aiMessages.push({
+          role: m.role === "assistant" ? "assistant" : "user",
+          content: m.content,
+        });
+      }
     }
 
-    const fullPrompt = `
-${systemPrompt}
+    let text: string;
 
-CONVERSATION SO FAR:
-${conversation}
+    try {
+      text = await generateWithFallback(aiMessages);
+    } catch (err: any) {
+      const errMsg = err?.message || "";
+      const isQuota = errMsg.includes("429") || errMsg.includes("quota") || errMsg.includes("rate");
 
-Now respond as StudyMirror interviewer:
-`;
+      return NextResponse.json(
+        {
+          error: isQuota
+            ? "API rate limit reached. Please wait a moment and try again."
+            : "Failed to generate response",
+          errorType: isQuota ? "quota" : "api_error",
+          details: errMsg,
+        },
+        { status: isQuota ? 429 : 500 }
+      );
+    }
 
-    const result = await model.generateContent(fullPrompt);
-    const response = await result.response;
-    const text = response.text();
-
-    // Simple evaluation trigger logic
-    const turnCount = messages.length;
+    // Trigger evaluation once the user has answered twice.
+    const userTurnCount = (messages || []).filter((m) => m.role === "user").length;
 
     const evaluationReady =
-      turnCount >= 6 ||
+      userTurnCount >= 2 ||
       text.toLowerCase().includes("evaluation") ||
       text.toLowerCase().includes("assess");
 
@@ -72,6 +79,7 @@ Now respond as StudyMirror interviewer:
     return NextResponse.json(
       {
         error: "Failed to generate response",
+        errorType: "api_error",
         details: err?.message || "Unknown error",
       },
       { status: 500 }

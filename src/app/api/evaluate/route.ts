@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { model } from "@/lib/gemini";
+import { generateWithFallback, type AIMessage } from "@/lib/ai";
 import type { ChatRequest } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -9,28 +9,25 @@ export async function POST(req: Request) {
     const body: ChatRequest = await req.json();
     const { topic, messages, mode } = body;
 
-    const conversation = messages
+    const conversation = (messages || [])
       .map((m) => `${m.role.toUpperCase()}: ${m.content}`)
       .join("\n");
 
-    const prompt = `
-You are an expert evaluator for StudyMirror.
+    const aiMessages: AIMessage[] = [
+      {
+        role: "system",
+        content: `You are an expert evaluator for StudyMirror.
+You evaluate how well a student explained a concept during an interview.
 
-Analyze this conversation about: ${topic}
-
-MODE: ${mode}
-
-Return ONLY valid JSON.
-
-SCHEMA:
+Return ONLY valid JSON matching this exact schema:
 {
-  "overallScore": number,
+  "overallScore": number (0-100),
   "categories": {
-    "conceptAccuracy": number,
-    "depthOfExplanation": number,
-    "examplesUsed": number,
-    "clarityOfExplanation": number,
-    "missingConceptCoverage": number
+    "conceptAccuracy": number (0-10),
+    "depthOfExplanation": number (0-10),
+    "examplesUsed": number (0-10),
+    "clarityOfExplanation": number (0-10),
+    "missingConceptCoverage": number (0-10)
   },
   "strengths": string[],
   "vaguePoints": string[],
@@ -43,14 +40,32 @@ SCORING RULES:
 - Penalize vague explanations
 - Reward examples and clarity
 - Identify missing core concepts
+- Return ONLY the JSON object, no markdown, no explanation`,
+      },
+      {
+        role: "user",
+        content: `Evaluate this interview conversation about: ${topic}\nMode: ${mode}\n\nCONVERSATION:\n${conversation}`,
+      },
+    ];
 
-CONVERSATION:
-${conversation}
-`;
+    let text: string;
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    try {
+      text = await generateWithFallback(aiMessages);
+    } catch (err: any) {
+      const errMsg = err?.message || "";
+      const isQuota = errMsg.includes("429") || errMsg.includes("quota") || errMsg.includes("rate");
+
+      return NextResponse.json(
+        {
+          error: isQuota
+            ? "API rate limit reached. Please wait and try again."
+            : "Evaluation failed",
+          errorType: isQuota ? "quota" : "api_error",
+        },
+        { status: isQuota ? 429 : 500 }
+      );
+    }
 
     let json;
 
@@ -82,7 +97,10 @@ ${conversation}
     console.error("EVALUATION ERROR:", err);
 
     return NextResponse.json(
-      { error: "Evaluation failed" },
+      {
+        error: "Evaluation failed",
+        errorType: "api_error",
+      },
       { status: 500 }
     );
   }
