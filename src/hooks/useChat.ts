@@ -118,7 +118,7 @@ export function useChat({ topic, mode }: Props) {
 
       setMessages(finalMessages);
 
-      if (userTurnCount >= 2 || (res.ok && data.evaluationReady)) {
+      if (userTurnCount >= 6 || (res.ok && data.evaluationReady)) {
         setEvaluationReady(true);
       }
     } catch (err) {
@@ -131,7 +131,7 @@ export function useChat({ topic, mode }: Props) {
 
       setMessages([...updatedMessages, aiMessage]);
 
-      if (userTurnCount >= 2) {
+      if (userTurnCount >= 6) {
         setEvaluationReady(true);
       }
     } finally {

@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-const EVALUATION_TURN_TARGET = 2;
+const EVALUATION_TURN_TARGET = 6;
 
 function InterviewContent() {
   const searchParams = useSearchParams();

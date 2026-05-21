@@ -61,11 +61,11 @@ export async function POST(req: Request) {
       );
     }
 
-    // Trigger evaluation once the user has answered twice.
+    // Trigger evaluation once the user has answered 6 times.
     const userTurnCount = (messages || []).filter((m) => m.role === "user").length;
 
     const evaluationReady =
-      userTurnCount >= 2 ||
+      userTurnCount >= 6 ||
       text.toLowerCase().includes("evaluation") ||
       text.toLowerCase().includes("assess");
 
