@@ -11,6 +11,8 @@ export async function POST(req: Request) {
   try {
     const body: ChatRequest = await req.json();
     const { topic, mode, messages } = body;
+    // Allow user-supplied key to take priority over server env key
+    const userKey = req.headers.get("X-Api-Key") || undefined;
 
     if (!topic) {
       return NextResponse.json(
@@ -46,7 +48,7 @@ export async function POST(req: Request) {
     let text: string;
 
     try {
-      text = await generateWithFallback(aiMessages);
+      text = await generateWithFallback(aiMessages, userKey);
     } catch (err: any) {
       const errMsg = err?.message || "";
       const isQuota = errMsg.includes("429") || errMsg.includes("quota") || errMsg.includes("rate");

@@ -10,6 +10,7 @@ export async function POST(req: Request) {
   try {
     const body: ChatRequest = await req.json();
     const { topic, messages, mode } = body;
+    const userKey = req.headers.get("X-Api-Key") || undefined;
 
     const conversation = (messages || [])
       .map((m) => `${m.role.toUpperCase()}: ${m.content}`)
@@ -53,7 +54,7 @@ SCORING RULES:
     let text: string;
 
     try {
-      text = await generateWithFallback(aiMessages);
+      text = await generateWithFallback(aiMessages, userKey);
     } catch (err: any) {
       const errMsg = err?.message || "";
       const isQuota = errMsg.includes("429") || errMsg.includes("quota") || errMsg.includes("rate");

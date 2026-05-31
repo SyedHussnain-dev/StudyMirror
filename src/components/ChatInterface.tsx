@@ -1,9 +1,9 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { Send, Brain, Loader2 } from "lucide-react";
-import { Message } from "@/lib/types";
+import type { Message } from "@/lib/types";
 import MessageBubble from "./MessageBubble";
 import { cn } from "@/lib/utils";
 
@@ -12,6 +12,28 @@ interface ChatInterfaceProps {
   isLoading: boolean;
   onSendMessage: (content: string) => void;
   disabled?: boolean;
+}
+
+function TypingIndicator() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 10 }}
+      className="flex gap-3 self-start max-w-[85%]"
+    >
+      <div className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center mt-1 bg-violet-500/20 text-violet-400">
+        <Brain className="size-4" />
+      </div>
+      <div className="rounded-2xl rounded-tl-sm px-4 py-3 bg-slate-800/80 border border-slate-700/50">
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-violet-400 typing-dot-1" />
+          <span className="w-2 h-2 rounded-full bg-violet-400 typing-dot-2" />
+          <span className="w-2 h-2 rounded-full bg-violet-400 typing-dot-3" />
+        </div>
+      </div>
+    </motion.div>
+  );
 }
 
 export default function ChatInterface({
@@ -63,33 +85,35 @@ export default function ChatInterface({
         ref={scrollRef}
         className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-4 scrollbar-thin min-h-0"
       >
-        {messages.map((msg, i) => (
-          <MessageBubble key={i} message={msg} index={i} />
-        ))}
+        <AnimatePresence initial={false}>
+          {messages.map((msg, i) => (
+            <MessageBubble key={`${i}-${msg.timestamp || i}`} message={msg} index={i} />
+          ))}
+        </AnimatePresence>
 
         {/* Typing indicator */}
-        {isLoading && (
+        <AnimatePresence>
+          {isLoading && <TypingIndicator />}
+        </AnimatePresence>
+
+        {/* Empty state */}
+        {messages.length === 0 && !isLoading && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex gap-3 self-start max-w-[85%]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex-1 flex items-center justify-center"
           >
-            <div className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center mt-1 bg-violet-500/20 text-violet-400">
-              <Brain className="size-4" />
-            </div>
-            <div className="rounded-2xl rounded-tl-sm px-4 py-3 bg-slate-800/80 border border-slate-700/50">
-              <div className="flex items-center gap-2 text-sm text-slate-400">
-                <Loader2 className="size-4 animate-spin" />
-                StudyMirror is thinking...
-              </div>
+            <div className="text-center text-slate-600">
+              <Brain className="size-12 mx-auto mb-3 opacity-30" />
+              <p className="text-sm">Start explaining to begin the interview</p>
             </div>
           </motion.div>
         )}
       </div>
 
       {/* Input area */}
-      <div className="shrink-0 border-t border-slate-800 p-4">
-        <form onSubmit={handleSubmit} className="flex gap-3 items-end">
+      <div className="shrink-0 border-t border-slate-800 bg-[#020617]/80 backdrop-blur-md p-4">
+        <form onSubmit={handleSubmit} className="flex gap-3 items-end max-w-4xl mx-auto">
           <div className="flex-1 relative">
             <textarea
               ref={textareaRef}
@@ -111,11 +135,15 @@ export default function ChatInterface({
             className={cn(
               "shrink-0 w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200",
               input.trim() && !isLoading && !disabled
-                ? "bg-violet-600 hover:bg-violet-500 text-white shadow-lg shadow-violet-500/20"
+                ? "bg-violet-600 hover:bg-violet-500 text-white shadow-lg shadow-violet-500/20 hover:shadow-violet-500/30 hover:scale-105"
                 : "bg-slate-800 text-slate-600 cursor-not-allowed"
             )}
           >
-            <Send className="size-4" />
+            {isLoading ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Send className="size-4" />
+            )}
           </button>
         </form>
         <p className="text-xs text-slate-600 mt-2 text-center">

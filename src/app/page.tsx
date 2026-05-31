@@ -2,6 +2,9 @@
 
 import Hero from "@/components/Hero";
 import FeatureCard from "@/components/FeatureCard";
+import Footer from "@/components/Footer";
+import ParticleBackground from "@/components/ParticleBackground";
+import { useAppStore } from "@/lib/store";
 import {
   Brain,
   MessageSquareText,
@@ -11,27 +14,41 @@ import {
   ShieldAlert,
   Target,
   ArrowRight,
+  Zap,
+  TrendingUp,
+  Award,
 } from "lucide-react";
 import Link from "next/link";
+import { motion } from "motion/react";
 
 export default function LandingPage() {
+  const streak = useAppStore((s) => s.streak);
+
   return (
-    <main className="flex-1">
+    <main className="flex-1 relative">
+      <ParticleBackground />
+
       {/* Hero */}
       <Hero />
 
       {/* How It Works */}
-      <section className="py-24 px-4 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-violet-600/5 to-transparent pointer-events-none" />
+      <section id="how-it-works" className="py-24 px-4 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-violet-600/3 to-transparent pointer-events-none" />
         <div className="max-w-5xl mx-auto relative z-10">
-          <div className="text-center mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               How It Works
             </h2>
             <p className="text-slate-400 max-w-xl mx-auto">
               Three simple steps to validate your understanding
             </p>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
@@ -57,15 +74,19 @@ export default function LandingPage() {
                   "Receive a detailed understanding score with strengths, gaps, and revision tips.",
               },
             ].map((item, i) => (
-              <div
+              <motion.div
                 key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
                 className="relative group"
               >
-                <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800/50 rounded-2xl p-8 hover:border-violet-500/30 transition-all duration-300 h-full">
-                  <span className="text-violet-500/40 text-5xl font-bold absolute top-4 right-6">
+                <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800/50 rounded-2xl p-8 hover:border-violet-500/30 transition-all duration-300 h-full card-shine">
+                  <span className="text-violet-500/20 text-6xl font-bold absolute top-4 right-6 select-none">
                     {item.step}
                   </span>
-                  <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center mb-5 text-violet-400">
+                  <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center mb-5 text-violet-400 transition-transform duration-300 group-hover:scale-110">
                     <item.icon className="size-6" />
                   </div>
                   <h3 className="text-xl font-semibold text-white mb-3">
@@ -75,7 +96,38 @@ export default function LandingPage() {
                     {item.description}
                   </p>
                 </div>
-              </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Bar */}
+      <section className="py-16 px-4 relative">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { label: "Active Learners", value: "2,400+", icon: Zap, color: "violet" },
+              { label: "Sessions Completed", value: "12K+", icon: TrendingUp, color: "emerald" },
+              { label: "Topics Covered", value: "500+", icon: BookOpen, color: "amber" },
+              { label: "Avg. Score", value: "78%", icon: Award, color: "sky" },
+            ].map((stat, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.1 }}
+                className="bg-slate-900/30 backdrop-blur-sm border border-slate-800/30 rounded-2xl p-6 text-center card-shine"
+              >
+                <stat.icon className={`size-5 mx-auto mb-2 ${
+                  stat.color === "violet" ? "text-violet-400" :
+                  stat.color === "emerald" ? "text-emerald-400" :
+                  stat.color === "amber" ? "text-amber-400" : "text-sky-400"
+                }`} />
+                <p className="text-2xl font-bold text-white mb-1">{stat.value}</p>
+                <p className="text-xs text-slate-500">{stat.label}</p>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -84,14 +136,20 @@ export default function LandingPage() {
       {/* Features */}
       <section className="py-24 px-4">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Intelligent Features
             </h2>
             <p className="text-slate-400 max-w-xl mx-auto">
               Built for deep understanding, not surface-level recall
             </p>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             <FeatureCard
@@ -140,11 +198,37 @@ export default function LandingPage() {
         </div>
       </section>
 
-
+      {/* Streak Banner */}
+      {streak.currentStreak > 0 && (
+        <section className="py-12 px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="max-w-2xl mx-auto"
+          >
+            <div className="bg-gradient-to-r from-violet-600/10 to-purple-600/10 border border-violet-500/20 rounded-2xl p-6 text-center backdrop-blur-sm">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Zap className="size-5 text-amber-400" />
+                <span className="text-amber-400 font-semibold">{streak.currentStreak} day streak!</span>
+              </div>
+              <p className="text-sm text-slate-400">
+                You have studied {streak.totalSessions} times. Keep it up to maintain your streak!
+              </p>
+            </div>
+          </motion.div>
+        </section>
+      )}
 
       {/* Bottom CTA */}
       <section className="py-24 px-4">
-        <div className="max-w-2xl mx-auto text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="max-w-2xl mx-auto text-center"
+        >
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Ready to test your understanding?
           </h2>
@@ -159,8 +243,11 @@ export default function LandingPage() {
             Start Explaining
             <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
           </Link>
-        </div>
+        </motion.div>
       </section>
+
+      {/* Footer */}
+      <Footer />
     </main>
   );
 }

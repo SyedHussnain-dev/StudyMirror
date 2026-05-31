@@ -29,9 +29,10 @@ interface OpenRouterResponse {
  */
 export async function generateContent(
   modelName: string,
-  messages: AIMessage[]
+  messages: AIMessage[],
+  overrideKey?: string
 ): Promise<string> {
-  const apiKey = process.env.OPENROUTER_API_KEY;
+  const apiKey = overrideKey || process.env.OPENROUTER_API_KEY;
   if (!apiKey) {
     throw new Error("Missing OPENROUTER_API_KEY in environment variables");
   }
@@ -78,11 +79,12 @@ export async function generateContent(
 export async function generateWithRetry(
   modelName: string,
   messages: AIMessage[],
-  maxRetries = 3
+  maxRetries = 3,
+  overrideKey?: string
 ): Promise<string> {
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
-      return await generateContent(modelName, messages);
+      return await generateContent(modelName, messages, overrideKey);
     } catch (err: any) {
       const status = err?.status;
       if (status === 429 && attempt < maxRetries) {
@@ -101,13 +103,14 @@ export async function generateWithRetry(
  * Try all fallback models in order until one succeeds.
  */
 export async function generateWithFallback(
-  messages: AIMessage[]
+  messages: AIMessage[],
+  overrideKey?: string
 ): Promise<string> {
   let lastError: unknown = null;
 
   for (const modelName of modelNames) {
     try {
-      const text = await generateWithRetry(modelName, messages);
+      const text = await generateWithRetry(modelName, messages, 3, overrideKey);
       if (text.trim()) return text;
     } catch (err: any) {
       lastError = err;

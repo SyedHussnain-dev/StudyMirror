@@ -2,8 +2,9 @@ export type Mode = "beginner" | "viva" | "strict";
 export type InterviewMode = Mode;
 
 export interface Message {
-  role: "user" | "ai" | "assistant";
+  role: "user" | "assistant";
   content: string;
+  timestamp?: number;
 }
 
 export interface ChatRequest {
@@ -40,10 +41,29 @@ export interface EvaluationRequest {
   messages: Message[];
 }
 
+export interface SessionRecord {
+  id: string;
+  topic: string;
+  mode: InterviewMode;
+  messages: Message[];
+  evaluation: Evaluation | null;
+  createdAt: number;
+  completedAt: number | null;
+  messageCount: number;
+}
+
+export interface StreakData {
+  currentStreak: number;
+  longestStreak: number;
+  lastStudyDate: string | null;
+  totalSessions: number;
+  weeklyActivity: Record<string, number>;
+}
+
 export const MODE_LABELS: Record<InterviewMode, string> = {
-  beginner: "Beginner Interviewer",
-  viva: "Viva Mode",
-  strict: "Strict Professor",
+  beginner: "Beginner",
+  viva: "Viva",
+  strict: "Strict",
 };
 
 export const MODE_DESCRIPTIONS: Record<InterviewMode, string> = {
@@ -57,3 +77,28 @@ export const MODE_COLORS: Record<InterviewMode, string> = {
   viva: "amber",
   strict: "rose",
 };
+
+export const CATEGORY_LABELS: Record<keyof EvaluationCategories, string> = {
+  conceptAccuracy: "Concept Accuracy",
+  depthOfExplanation: "Depth of Explanation",
+  examplesUsed: "Examples Used",
+  clarityOfExplanation: "Clarity",
+  missingConceptCoverage: "Coverage",
+};
+
+export const EVALUATION_TURN_TARGET = 6;
+
+export const POPULAR_TOPICS = [
+  "Object-Oriented Programming",
+  "React Hooks & State Management",
+  "Database Normalization",
+  "REST API Design",
+  "Machine Learning Basics",
+  "Data Structures & Algorithms",
+  "System Design Fundamentals",
+  "TCP/IP Networking",
+  "Git Version Control",
+  "Cloud Computing (AWS)",
+  "Docker & Containerization",
+  "Microservices Architecture",
+];
