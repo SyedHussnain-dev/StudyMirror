@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { InterviewMode, POPULAR_TOPICS } from "@/lib/types";
 import ModeCard from "@/components/ModeCard";
@@ -18,8 +18,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-export default function SetupPage() {
+function SetupContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [topic, setTopic] = useState("");
   const [mode, setMode] = useState<InterviewMode | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -30,10 +31,14 @@ export default function SetupPage() {
   const sessions = useAppStore((s) => s.sessions);
 
   useEffect(() => {
-    // Get recent unique topics from session history
     const topics = [...new Set(sessions.slice(0, 10).map((s) => s.topic))];
     setRecentTopics(topics);
   }, [sessions]);
+
+  useEffect(() => {
+    const preset = searchParams.get("topic");
+    if (preset) setTopic(preset);
+  }, [searchParams]);
 
   const canProceed = topic.trim().length > 0 && mode !== null;
 
@@ -259,5 +264,17 @@ export default function SetupPage() {
         </motion.div>
       </div>
     </main>
+  );
+}
+
+export default function SetupPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex-1 min-h-screen flex items-center justify-center text-slate-400">
+        Loading...
+      </div>
+    }>
+      <SetupContent />
+    </Suspense>
   );
 }

@@ -261,3 +261,8 @@
   outline: 2px solid oklch(0.65 0.25 280);
   outline-offset: 2px;
 }
+
+/* Three.js canvas */
+canvas {
+  touch-action: none;
+}

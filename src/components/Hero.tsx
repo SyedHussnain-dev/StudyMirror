@@ -3,20 +3,24 @@
 import { motion } from "motion/react";
 import { Brain, Sparkles, ArrowRight, ChevronDown } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
+import Scene3DWrapper from "@/components/three/Scene3DWrapper";
 
 export default function Hero() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-4">
-      {/* Background gradient orbs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-32 w-[500px] h-[500px] bg-violet-600/15 rounded-full blur-[140px] animate-float" />
-        <div className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[140px] animate-float-reverse" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-violet-500/5 rounded-full blur-[200px] animate-pulse-glow" />
+      {/* 3D background scene */}
+      <Scene3DWrapper className="opacity-80" />
+
+      {/* Gradient overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#020617]/40 via-[#020617]/60 to-[#020617] pointer-events-none z-[1]" />
+
+      {/* Ambient orbs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
+        <div className="absolute top-1/4 -left-32 w-[500px] h-[500px] bg-violet-600/10 rounded-full blur-[140px] animate-float" />
+        <div className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] bg-purple-600/8 rounded-full blur-[140px] animate-float-reverse" />
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto text-center">
-        {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -27,7 +31,6 @@ export default function Hero() {
           AI-Powered Feynman Technique
         </motion.div>
 
-        {/* Headline */}
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -43,7 +46,6 @@ export default function Hero() {
           </span>
         </motion.h1>
 
-        {/* Subheadline */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -53,7 +55,6 @@ export default function Hero() {
           Stop rereading. Start proving understanding.
         </motion.p>
 
-        {/* Description */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -65,7 +66,6 @@ export default function Hero() {
           and evaluates your true understanding.
         </motion.p>
 
-        {/* CTA Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -81,35 +81,13 @@ export default function Hero() {
             <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
           </Link>
           <Link
-            href="#how-it-works"
+            href="/library"
             className="inline-flex items-center gap-2 px-6 py-4 text-slate-400 hover:text-slate-200 font-medium text-lg rounded-xl transition-all duration-300 border border-slate-800 hover:border-slate-700 hover:bg-slate-800/30"
           >
-            How it works
+            Browse Topics
           </Link>
         </motion.div>
 
-        {/* Floating 3D Logo */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="flex justify-center"
-        >
-          <div className="relative group">
-            <div className="absolute inset-0 bg-violet-500/30 blur-2xl rounded-full group-hover:bg-violet-500/40 transition-all duration-500" />
-            <div className="relative w-24 h-24 md:w-28 md:h-28">
-              <Image
-                src="/logo-3d.png"
-                alt="StudyMirror"
-                fill
-                className="object-contain drop-shadow-2xl"
-                priority
-              />
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

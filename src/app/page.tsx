@@ -4,7 +4,11 @@ import Hero from "@/components/Hero";
 import FeatureCard from "@/components/FeatureCard";
 import Footer from "@/components/Footer";
 import ParticleBackground from "@/components/ParticleBackground";
+import SectionHeader from "@/components/ui/SectionHeader";
+import GlowCard from "@/components/ui/GlowCard";
 import { useAppStore } from "@/lib/store";
+import { computeDashboardStats } from "@/lib/analytics";
+import { TOPIC_LIBRARY } from "@/lib/topics";
 import {
   Brain,
   MessageSquareText,
@@ -23,6 +27,8 @@ import { motion } from "motion/react";
 
 export default function LandingPage() {
   const streak = useAppStore((s) => s.streak);
+  const sessions = useAppStore((s) => s.sessions);
+  const stats = computeDashboardStats(sessions, streak);
 
   return (
     <main className="flex-1 relative">
@@ -35,20 +41,10 @@ export default function LandingPage() {
       <section id="how-it-works" className="py-24 px-4 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-violet-600/3 to-transparent pointer-events-none" />
         <div className="max-w-5xl mx-auto relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              How It Works
-            </h2>
-            <p className="text-slate-400 max-w-xl mx-auto">
-              Three simple steps to validate your understanding
-            </p>
-          </motion.div>
+          <SectionHeader
+            title="How It Works"
+            subtitle="Three simple steps to validate your understanding"
+          />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
@@ -107,10 +103,30 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: "Active Learners", value: "2,400+", icon: Zap, color: "violet" },
-              { label: "Sessions Completed", value: "12K+", icon: TrendingUp, color: "emerald" },
-              { label: "Topics Covered", value: "500+", icon: BookOpen, color: "amber" },
-              { label: "Avg. Score", value: "78%", icon: Award, color: "sky" },
+              {
+                label: stats.totalSessions > 0 ? "Your Sessions" : "Library Topics",
+                value: stats.totalSessions > 0 ? stats.totalSessions : TOPIC_LIBRARY.length,
+                icon: Zap,
+                accent: "violet" as const,
+              },
+              {
+                label: "Completed",
+                value: stats.completedSessions || "—",
+                icon: TrendingUp,
+                accent: "emerald" as const,
+              },
+              {
+                label: stats.topicsStudied > 0 ? "Topics Studied" : "Study Modes",
+                value: stats.topicsStudied > 0 ? stats.topicsStudied : 3,
+                icon: BookOpen,
+                accent: "amber" as const,
+              },
+              {
+                label: stats.averageScore > 0 ? "Avg. Score" : "Day Streak",
+                value: stats.averageScore > 0 ? `${stats.averageScore}%` : streak.currentStreak,
+                icon: Award,
+                accent: "sky" as const,
+              },
             ].map((stat, i) => (
               <motion.div
                 key={i}
@@ -118,15 +134,16 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.1 }}
-                className="bg-slate-900/30 backdrop-blur-sm border border-slate-800/30 rounded-2xl p-6 text-center card-shine"
               >
-                <stat.icon className={`size-5 mx-auto mb-2 ${
-                  stat.color === "violet" ? "text-violet-400" :
-                  stat.color === "emerald" ? "text-emerald-400" :
-                  stat.color === "amber" ? "text-amber-400" : "text-sky-400"
-                }`} />
-                <p className="text-2xl font-bold text-white mb-1">{stat.value}</p>
-                <p className="text-xs text-slate-500">{stat.label}</p>
+                <GlowCard accent={stat.accent} hoverLift={false} className="text-center p-6">
+                  <stat.icon className={`size-5 mx-auto mb-2 ${
+                    stat.accent === "violet" ? "text-violet-400" :
+                    stat.accent === "emerald" ? "text-emerald-400" :
+                    stat.accent === "amber" ? "text-amber-400" : "text-sky-400"
+                  }`} />
+                  <p className="text-2xl font-bold text-white mb-1">{stat.value}</p>
+                  <p className="text-xs text-slate-500">{stat.label}</p>
+                </GlowCard>
               </motion.div>
             ))}
           </div>
@@ -136,20 +153,10 @@ export default function LandingPage() {
       {/* Features */}
       <section className="py-24 px-4">
         <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Intelligent Features
-            </h2>
-            <p className="text-slate-400 max-w-xl mx-auto">
-              Built for deep understanding, not surface-level recall
-            </p>
-          </motion.div>
+          <SectionHeader
+            title="Intelligent Features"
+            subtitle="Built for deep understanding, not surface-level recall"
+          />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             <FeatureCard

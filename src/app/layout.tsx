@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import ApiKeySetup from "@/components/ApiKeySetup";
+import Navbar from "@/components/Navbar";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -45,6 +46,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-[#020617]">
+        <Navbar />
         {children}
         <ApiKeySetup />
       </body>

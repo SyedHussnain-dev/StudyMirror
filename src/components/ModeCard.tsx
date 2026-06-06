@@ -3,7 +3,7 @@
 import { motion } from "motion/react";
 import { InterviewMode, MODE_LABELS, MODE_DESCRIPTIONS } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { GraduationCap, BookOpen, ShieldAlert, Check } from "lucide-react";
+import { GraduationCap, BookOpen, ShieldAlert, Check, type LucideIcon } from "lucide-react";
 
 interface ModeCardProps {
   mode: InterviewMode;
@@ -12,7 +12,7 @@ interface ModeCardProps {
   index: number;
 }
 
-const MODE_ICONS: Record<InterviewMode, React.ElementType> = {
+const MODE_ICONS: Record<InterviewMode, LucideIcon> = {
   beginner: BookOpen,
   viva: GraduationCap,
   strict: ShieldAlert,
